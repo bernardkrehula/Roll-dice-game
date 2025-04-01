@@ -19,6 +19,7 @@ body {
     justify-content: center;
     margin: 200px auto;
     font-size: 2rem;
+    white-space: nowrap;
 }
 
 .main h1 {
@@ -27,25 +28,26 @@ body {
 .player-one {
     background-color: bisque;
     border-radius: 10px 0 0 10px;
-    padding: 50px;
+    padding: 50px 150px;
 }
 .player-two {
     background-color: brown;
     border-radius: 0 10px 10px 0;
-    padding: 50px;
+    padding: 50px 150px;
 }
 .currentScore {
     background-color: blueviolet;
     border-radius: 10px;
     margin-top: 100px;
-    padding: 10px;
+    padding: 20px;
+    color: white;
 }
 .all-btns {
     display: flex;
     position: absolute;
     z-index: 1;
     position: absolute;
-    top: 50%;
+    top: 42%;
     left: 50%;
     transform: translate(-50%, -50%);
     justify-content: center;
@@ -57,6 +59,7 @@ body {
     border-radius: 20px;
     padding: 10px 20px;
     transition: 0.2s ease-in-out;
+    margin-top: 20px;
 }
 .all-btns button:hover {
     background-color: rgb(224, 224, 224);
