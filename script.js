@@ -8,6 +8,7 @@ import { dices } from "./DiceArray.js";
 const newGame = document.querySelector('.new-game');
 const roll = document.querySelector('.roll-dice');
 const hold = document.querySelector('.hold');
+const randomDice = document.querySelector('.all-btns img');
 
 function playerScoreCreator() {
     let playerCurrentScore;
@@ -24,19 +25,30 @@ function playerScoreCreator() {
 function scoreManager(){
     const playerScoresArray  = [];
 
-    const pushScoreInArray = () => {
-        playerScoreCreator.push();
+    const pushScoreInArray = (player) => {
+        playerScoresArray.push(player);
     }
     const giveRandomDice = () => {
        let find = Math.floor(Math.random() * 6);
-       return dices.find(dice => dice.id == find);
+       return dices.find(dice => dice.id === find).img;
     }
-
-    return { giveRandomDice, pushScoreInArray }
+    const returnArray = () => {
+        return playerScoresArray;
+    }
+    return { giveRandomDice, pushScoreInArray, returnArray }
 }
 const manager = scoreManager();
 
+
+for(let i = 0; i < 2; i++){
+    const playerCreator = playerScoreCreator();
+    manager.pushScoreInArray(playerCreator);
+}
+
+function displayRandomDice(){
+   randomDice.src = `${manager.giveRandomDice()}`;
+}
+
 roll.addEventListener('click', () => {
-    console.log('radi')
+    displayRandomDice();
 });
-console.log(manager.giveRandomDice())
