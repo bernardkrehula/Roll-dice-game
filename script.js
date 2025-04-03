@@ -36,7 +36,7 @@ function scoreManager() {
     const playerScoresArray = [];
 
     const pushScoreInArray = (player) => playerScoresArray.push(player);
-    
+
     const giveRandomId = () => Math.floor(Math.random() * 6) + 1; 
 
     const giveRandomDice = (id) => dices.find(dice => dice.id === id).img;
@@ -52,7 +52,8 @@ function scoreManager() {
     const resetOnDiceStatusOne = (randomId) => {
        if(randomId === 1){
             const selectedPlayer = checkActivePlayer();
-            selectedPlayer.toggleCurrentScore(0); 
+            selectedPlayer.toggleCurrentScore(0);
+            changePlayerState();
        }
     }
     const setInitialState = () => {
@@ -118,7 +119,8 @@ roll.addEventListener('click', () => {
 
 hold.addEventListener('click', () => {
     const currentPlayer = manager.checkActivePlayer();
-    currentPlayer.toggleTotalScore();
+    currentPlayer.toggleTotalScore(currentPlayer.getCurrentScore());
+    currentPlayer.toggleCurrentScore(0);
     manager.changePlayerState(); 
 });
 
