@@ -10,8 +10,8 @@ const roll = document.querySelector('.roll-dice');
 const hold = document.querySelector('.hold');
 const randomDice = document.querySelector('.all-btns img');
 
-const playerOneScore = document.querySelector(".player-one h1:nth-of-type(2)");
-const playerTwoScore = document.querySelector(".player-two h1:nth-of-type(2)"); 
+const playerOneScore = document.querySelector(".total-scoreOne");
+const playerTwoScore = document.querySelector(".total-scoreTwo"); 
 const playerOneCurrent = document.querySelector(".player-one .currentScore h2"); 
 const playerTwoCurrent = document.querySelector(".player-two .currentScore h2");
 
@@ -21,11 +21,10 @@ function playerScoreCreator() {
     let active = false; 
 
     const getCurrentScore = () => playerCurrentScore;
-    const toggleCurrentScore = (value) => { playerCurrentScore += value; };
+    const toggleCurrentScore = (value) => { playerCurrentScore = value; };
     const getTotalScore = () => playerTotalScore;
-    const toggleTotalScore = () => {
-        playerTotalScore += playerCurrentScore; 
-        playerCurrentScore = 0;
+    const toggleTotalScore = (value) => {
+        playerTotalScore += value;
     };
     const isActive = () => active;
     const toggleActive = (value) => { active = value; };
@@ -37,16 +36,25 @@ function scoreManager() {
     const playerScoresArray = [];
 
     const pushScoreInArray = (player) => playerScoresArray.push(player);
+    
     const giveRandomId = () => Math.floor(Math.random() * 6) + 1; 
+
     const giveRandomDice = (id) => dices.find(dice => dice.id === id).img;
+
     const checkActivePlayer = () => playerScoresArray.find(player => player.isActive());
     
-    const addCurrentScore = (id) => {
+    const addValueToCurrentScore = (id) => {
         const selectedPlayer = checkActivePlayer();
-        selectedPlayer.toggleCurrentScore(id);
-        updateUI(); 
+        let getValue = selectedPlayer.getCurrentScore();
+        getValue += id;
+        selectedPlayer.toggleCurrentScore(getValue);
     };
-    
+    const resetOnDiceStatusOne = (randomId) => {
+       if(randomId === 1){
+            const selectedPlayer = checkActivePlayer();
+            selectedPlayer.toggleCurrentScore(0); 
+       }
+    }
     const setInitialState = () => {
         playerScoresArray[0].toggleActive(true); 
     };
@@ -70,7 +78,7 @@ function scoreManager() {
     };
     const returnArray = () => { return playerScoresArray };
     
-    return { giveRandomId, giveRandomDice, pushScoreInArray, checkActivePlayer, setInitialState, changePlayerState, addCurrentScore, resetGame, returnArray };
+    return { giveRandomId, giveRandomDice, pushScoreInArray, checkActivePlayer, setInitialState, changePlayerState, addValueToCurrentScore, resetGame, returnArray, resetOnDiceStatusOne };
 }
 
 const manager = scoreManager();
@@ -86,7 +94,9 @@ function displayRandomDice() {
     const diceId = manager.giveRandomId();
     randomDice.style.display = 'block';
     randomDice.src = manager.giveRandomDice(diceId);
-    manager.addCurrentScore(diceId);
+    manager.addValueToCurrentScore(diceId);
+    manager.resetOnDiceStatusOne(diceId);
+    updateUI();
 }
 
 function updateUI() {
@@ -102,7 +112,9 @@ function updateUI() {
     document.querySelector(".player-two").classList.toggle("active", playerTwo.isActive());
 }
 
-roll.addEventListener('click', displayRandomDice);
+roll.addEventListener('click', () => {
+    displayRandomDice();
+});
 
 hold.addEventListener('click', () => {
     const currentPlayer = manager.checkActivePlayer();
