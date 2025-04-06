@@ -27,11 +27,16 @@ const playerTwoCurrent = document.querySelector(".player-two .currentScore h2");
 const playerThreeCurrent = document.querySelector(".player-three .currentScore h2");
 const playerFourCurrent = document.querySelector(".player-four .currentScore h2");
 
+const winnerWindow = document.querySelector(".winner");
+
 function playerScoreCreator() {
-    let serialNumber = 0;
+    let id = 0;
     let playerCurrentScore = 0;
     let playerTotalScore = 0;
-    let active = false; 
+    let active = false;
+
+    const givePlayerId = (value) => { id = value };
+    const getId = () => { return id };
 
     const getCurrentScore = () => playerCurrentScore;
     const setCurrentScore = (value) => { playerCurrentScore = value; };
@@ -41,16 +46,11 @@ function playerScoreCreator() {
     const addToTotalScore = (value) => { playerTotalScore += value; };
     const resetTotalScore = () => { playerTotalScore = 0; };
 
-    const isActive = () => active;
-    const toggleActive = (value) => { active = value };
-    const givePlayerSerialNumber = (value) => { serialNumber = value };
-    const playerSerialNumber = () => { return serialNumber };
-
-    return { getCurrentScore, setCurrentScore, addToCurrentScore, getTotalScore, addToTotalScore, resetTotalScore, isActive, toggleActive, playerSerialNumber, givePlayerSerialNumber };
+    return { getCurrentScore, setCurrentScore, addToCurrentScore, getTotalScore, addToTotalScore, resetTotalScore, getId, givePlayerId };
 }
 
 function scoreManager() {
-    let orderedPlayer = 0;
+    let playerId = 0;
 
     const playerScoresArray = [];
 
@@ -60,11 +60,12 @@ function scoreManager() {
 
     const giveRandomDice = (id) => dices.find(dice => dice.id === id).img;
 
-    const checkActivePlayer = () => playerScoresArray.find(player => player.playerSerialNumber() == orderedPlayer);
+    const checkActivePlayer = () => playerScoresArray.find(player => player.getId() == playerId);
     
     const addValueToCurrentScore = (id) => {
         const selectedPlayer = checkActivePlayer();
         selectedPlayer.addToCurrentScore(id);
+        displayActivePlayer(selectedPlayer.getId());
         winner();
     };
 
@@ -73,16 +74,24 @@ function scoreManager() {
             const selectedPlayer = checkActivePlayer();
             selectedPlayer.setCurrentScore(0);
             setPlayerByOrder();
+            setPlayerBorderToNone();
        }
     };
-    const setPlayerByOrder = () => {
-        orderedPlayer = (orderedPlayer + 1) % playerScoresArray.length;
-        return orderedPlayer;
+    const setPlayerBorderToNone = () => {
+        playerScoresArray.forEach((player) => {
+            let div = document.getElementById(`${player.getId()}`);
+            div.style.border = 'none';
+        })
+    }
+
+    const setPlayerByOrder = () => { 
+        playerId = (playerId + 1) % playerScoresArray.length;
+        return playerId;
     }
     const winner = () => {
         const selectedPlayer = checkActivePlayer();
         if(selectedPlayer.getTotalScore() > 20 || selectedPlayer.getCurrentScore() > 20){
-            resetGame();
+            winnerWindow.style.display = 'block';
         }
     }
     const resetGame = () => {
@@ -90,13 +99,13 @@ function scoreManager() {
             player.resetTotalScore();
             player.setCurrentScore(0);
         });
-        orderedPlayer = 0;
+        playerId = 0;
         updateUI();
     };
 
     const returnArray = () => { return playerScoresArray };
 
-    return { winner, setPlayerByOrder, giveRandomId, giveRandomDice, pushScoreInArray, checkActivePlayer, addValueToCurrentScore, resetGame, returnArray, resetOnDiceStatusOne };
+    return { winner, setPlayerByOrder, giveRandomId, giveRandomDice, pushScoreInArray, checkActivePlayer, addValueToCurrentScore, resetGame, returnArray, resetOnDiceStatusOne, setPlayerBorderToNone };
 }
 
 const manager = scoreManager();
@@ -104,7 +113,7 @@ randomDice.style.display = 'none';
 
 for (let i = 0; i < 4; i++) {
     const player = playerScoreCreator();
-    player.givePlayerSerialNumber(i);
+    player.givePlayerId(i);
     manager.pushScoreInArray(player);
 }
 
@@ -115,6 +124,10 @@ function displayRandomDice() {
     manager.addValueToCurrentScore(diceId);
     manager.resetOnDiceStatusOne(diceId);
     updateUI();
+}
+function displayActivePlayer(id){
+    const player = document.getElementById(`${id}`);
+    player.style.border = '2px solid black';
 }
 
 function updateUI() {
@@ -149,4 +162,8 @@ hold.addEventListener('click', () => {
 newGame.addEventListener('click', () => {
     manager.resetGame();
     randomDice.style.display = 'none';
+    manager.setPlayerBorderToNone();
 });
+winnerWindow.addEventListener('click', () => {
+    winnerWindow.style.display = 'none';
+})

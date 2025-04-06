@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="main">
-        <div class="player-one">
+        <div class="player-one" id="0">
             <h1>PLAYER 1</h1>
             <h1 class="total-scoreOne">0</h1>
             <div class="currentScore">
@@ -16,7 +16,7 @@
                 <h2>0</h2>
             </div>
         </div>
-        <div class="player-two">
+        <div class="player-two" id="1">
             <h1>PLAYER 2</h1>
             <h1 class="total-scoreTwo">0</h1>
             <div class="currentScore">
@@ -24,7 +24,7 @@
                 <h2>0</h2>
             </div>
         </div>
-        <div class="player-three">
+        <div class="player-three" id="2">
             <h1>PLAYER 3</h1>
             <h1 class="total-scoreThree">0</h1>
             <div class="currentScore">
@@ -32,7 +32,7 @@
                 <h2>0</h2>
             </div>
         </div>
-        <div class="player-four">
+        <div class="player-four" id="3">
             <h1>PLAYER 4</h1>
             <h1 class="total-scoreFour">0</h1>
             <div class="currentScore">
@@ -46,6 +46,9 @@
         <img src="img/Dice-6--Streamline-Lucide.png">
         <button class="roll-dice">🎲 Roll dice</button>
         <button class="hold">📥 Hold</button>
+    </div>
+    <div class="winner">
+        <h1>You Won!</h1>
     </div>
     <script type="module" src="script.js"></script>
     <script type="module" src="DiceArray.js"></script>
