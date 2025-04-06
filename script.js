@@ -4,6 +4,13 @@
 //Funkcija scoreManager
 //Funkcija Roll dice
 //Funkcija hold
+
+
+//Dodati da se igra do score 10
+//Dodati da igraju 4 playera
+//Prikazati win ili lose
+//Prikazati aktivnog igraca na ekranu
+
 import { dices } from "./DiceArray.js";
 const newGame = document.querySelector('.new-game');
 const roll = document.querySelector('.roll-dice');
@@ -21,15 +28,17 @@ function playerScoreCreator() {
     let active = false; 
 
     const getCurrentScore = () => playerCurrentScore;
-    const toggleCurrentScore = (value) => { playerCurrentScore = value; };
-    const getTotalScore = () => playerTotalScore;
-    const toggleTotalScore = (value) => {
-        playerTotalScore += value;
-    };
-    const isActive = () => active;
-    const toggleActive = (value) => { active = value; };
+    const setCurrentScore = (value) => { playerCurrentScore = value; };
+    const addToCurrentScore = (value) => { playerCurrentScore += value; };
 
-    return { getCurrentScore, toggleCurrentScore, getTotalScore, toggleTotalScore, isActive, toggleActive };
+    const getTotalScore = () => playerTotalScore;
+    const addToTotalScore = (value) => { playerTotalScore += value; };
+    const resetTotalScore = () => { playerTotalScore = 0; };
+
+    const isActive = () => active;
+    const toggleActive = (value) => { active = value };
+
+    return { getCurrentScore, setCurrentScore, addToCurrentScore, getTotalScore, addToTotalScore, resetTotalScore, isActive, toggleActive };
 }
 
 function scoreManager() {
@@ -45,17 +54,17 @@ function scoreManager() {
     
     const addValueToCurrentScore = (id) => {
         const selectedPlayer = checkActivePlayer();
-        let getValue = selectedPlayer.getCurrentScore();
-        getValue += id;
-        selectedPlayer.toggleCurrentScore(getValue);
+        selectedPlayer.addToCurrentScore(id);
     };
+
     const resetOnDiceStatusOne = (randomId) => {
        if(randomId === 1){
             const selectedPlayer = checkActivePlayer();
-            selectedPlayer.toggleCurrentScore(0);
+            selectedPlayer.setCurrentScore(0);
             changePlayerState();
        }
-    }
+    };
+
     const setInitialState = () => {
         playerScoresArray[0].toggleActive(true); 
     };
@@ -72,13 +81,15 @@ function scoreManager() {
     const resetGame = () => {
         playerScoresArray.forEach(player => {
             player.toggleActive(false);
-            player.toggleTotalScore(0);
-            updateUI();
+            player.resetTotalScore();
+            player.setCurrentScore(0);
         });
-        setInitialState(); 
+        setInitialState();
+        updateUI();
     };
+
     const returnArray = () => { return playerScoresArray };
-    
+
     return { giveRandomId, giveRandomDice, pushScoreInArray, checkActivePlayer, setInitialState, changePlayerState, addValueToCurrentScore, resetGame, returnArray, resetOnDiceStatusOne };
 }
 
@@ -119,14 +130,13 @@ roll.addEventListener('click', () => {
 
 hold.addEventListener('click', () => {
     const currentPlayer = manager.checkActivePlayer();
-    currentPlayer.toggleTotalScore(currentPlayer.getCurrentScore());
-    currentPlayer.toggleCurrentScore(0);
-    manager.changePlayerState(); 
+    currentPlayer.addToTotalScore(currentPlayer.getCurrentScore());
+    currentPlayer.setCurrentScore(0);
+    manager.changePlayerState();
+    updateUI();
 });
 
 newGame.addEventListener('click', () => {
     manager.resetGame();
     randomDice.style.display = 'none';
-    playerOneScore.innerHTML = '0';
-    playerTwoScore.innerHTML = '0';
 });
